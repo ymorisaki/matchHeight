@@ -49,6 +49,26 @@ export function matchHeight() {
         },
 
         /**
+         * ウィンドウリサイズ時の処理
+         * @return {void}
+         */
+        resizeHundler: function () {
+          let timeOutId = null;
+
+          window.addEventListener('resize', () => {
+            if (timeOutId) {
+              return;
+            }
+
+            timeOutId = setTimeout( () => {
+              timeOutId = 0;
+              this.setRowsAry();
+              this.setHeights();
+            }, this.threshold);
+          }, false);
+        },
+
+        /**
          * 配置Y軸が同一にある要素を格納する連想配列を定義
          * リサイズの度に処理を行う
          * @return {void}
@@ -91,26 +111,6 @@ export function matchHeight() {
         },
 
         /**
-         * ウィンドウリサイズ時の処理
-         * @return {void}
-         */
-        resizeHundler: function () {
-          let timeOutId = null;
-
-          window.addEventListener('resize', () => {
-            if (timeOutId) {
-              return;
-            }
-
-            timeOutId = setTimeout( () => {
-              timeOutId = 0;
-              this.setRowsAry();
-              this.setHeights();
-            }, this.threshold);
-          }, false);
-        },
-
-        /**
          * 配置Y軸が同一にある要素の各要素の高さを揃える
          * @returns {void}
          */
@@ -120,9 +120,9 @@ export function matchHeight() {
 
             const setSortHeights = () => {
               return new Promise ( resolve => {
-                let itemLength = null;
+
                 // 配置Y軸が同一にあるwrapperを順に処理
-                this.rows[key].forEach( (item, index) => {
+                this.rows[key].forEach( item => {
                   let i = 0;
 
                   // wrapper内の高さを揃える子要素の高さを順に取得
@@ -143,10 +143,16 @@ export function matchHeight() {
             };
 
             setSortHeights().then( () => {
+              let classesKeyAry = [];
+              let rowsKeyAry = [];
+
               for (let key in heights) {
                 heights[key].sort(this.sortAry);
+                classesKeyAry.push([key]);
               }
-              console.log(this.rows, heights)
+
+              rowsKeyAry.push([key]);
+              console.log(classesKeyAry, this.rows[rowsKeyAry[0]], heights)
             });
           }
         },
