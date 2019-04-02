@@ -95,7 +95,6 @@ export function matchHeight() {
          * @return {void}
          */
         resizeHundler: function () {
-          let self = this;
           let timeOutId = null;
 
           window.addEventListener('resize', () => {
@@ -105,57 +104,64 @@ export function matchHeight() {
 
             timeOutId = setTimeout( () => {
               timeOutId = 0;
-              self.setRowsAry();
-              self.setHeight();
+              this.setRowsAry();
+              this.setHeights();
             }, this.threshold);
           }, false);
         },
 
         /**
-         * 各要素の高さを揃える
+         * 配置Y軸が同一にある要素の各要素の高さを揃える
          * @returns {void}
          */
-        setHeight: function () {
+        setHeights: function () {
           for (let key in this.rows) {
-            const self = this;
             const heights = {};
 
-            const setHeights = () => {
+            const setSortHeights = () => {
               return new Promise ( resolve => {
-
-                // 同水平位置内のdivを順に処理
-                self.rows[key].forEach( item => {
+                let itemLength = null;
+                // 配置Y軸が同一にあるwrapperを順に処理
+                this.rows[key].forEach( (item, index) => {
                   let i = 0;
+                  console.log(index)
+                  
+                  itemLength = index;
 
-                  // div内の高さを揃える子要素を順に処理
-                  for (; i < self.targetChildAry.length; i++) {
-                    let targetHeight = item.querySelector('.' + self.targetChildAry[i]).offsetHeight;
+                  // wrapper内の高さを揃える子要素の高さを順に取得
+                  for (; i < this.targetChildAry.length; i++) {
+                    let targetHeight = item.querySelector('.' + this.targetChildAry[i]).offsetHeight;
 
-                    // heightsに該当のプロパティが存在しなければ生成し、空の配列を挿入
-                    if (!heights[self.targetChildAry[i]]) {
-                      heights[self.targetChildAry[i]] = [];
+                    // heightsに該当のclass名プロパティが存在しなければ生成し、空の配列を挿入
+                    if (!heights[this.targetChildAry[i]]) {
+                      heights[this.targetChildAry[i]] = [];
                     }
 
-                    heights[self.targetChildAry[i]].push(targetHeight);
+                    // 子要素のclass名と同一のプロパティに高さの値を追加
+                    heights[this.targetChildAry[i]].push(targetHeight);
                   }
                 });
                 resolve();
               });
             };
 
-            setHeights().then( () => {
+            setSortHeights().then( () => {
               for (let key in heights) {
-                let i = 0;
                 heights[key].sort(this.sortAry);
+              }
 
-                for (; i < heights[key].length; i++) {
-                  console.log(this.rows)
-                }
+              for (let key in this.rows) {
+                // console.log(this.rows[key])
               }
             });
           }
         },
 
+        /**
+         * 配列内のNumberを大きい順にソートする
+         * @param {Array} a ソートされる数値
+         * @param {Array} b ソートされる数値
+         */
         sortAry: function (a, b) {
           return b - a;
         },
@@ -164,6 +170,5 @@ export function matchHeight() {
       let matchHeight = new MatchHeight();
       matchHeight.init();
     });
-
   }
 }
