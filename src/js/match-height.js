@@ -124,9 +124,6 @@ export function matchHeight() {
                 // 配置Y軸が同一にあるwrapperを順に処理
                 this.rows[key].forEach( (item, index) => {
                   let i = 0;
-                  console.log(index)
-                  
-                  itemLength = index;
 
                   // wrapper内の高さを揃える子要素の高さを順に取得
                   for (; i < this.targetChildAry.length; i++) {
@@ -149,10 +146,7 @@ export function matchHeight() {
               for (let key in heights) {
                 heights[key].sort(this.sortAry);
               }
-
-              for (let key in this.rows) {
-                // console.log(this.rows[key])
-              }
+              console.log(this.rows, heights)
             });
           }
         },
