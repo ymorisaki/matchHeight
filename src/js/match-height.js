@@ -33,7 +33,7 @@ export function matchHeight() {
         this.matchHeightItem = this.root.querySelectorAll(this.root.getAttribute('data-align-target'));
         this.targetChildAry = this.root.getAttribute('data-target-child').replace(/\s/g, '').replace(/\./g, '').split(',');
         this.rows = null;
-        this.threshold = 500;
+        this.threshold = 100;
       };
 
       MatchHeight.prototype = {
@@ -62,10 +62,26 @@ export function matchHeight() {
 
             timeOutId = setTimeout( () => {
               timeOutId = 0;
+              this.removeHeight();
               this.setRowsAry();
               this.setHeights();
             }, this.threshold);
           }, false);
+        },
+
+        /**
+         * 
+         */
+        removeHeight: function () {
+          this.matchHeightItem.forEach( item => {
+            let i = 0;
+            let target = null;
+
+            for (; i < this.targetChildAry.length; i++) {
+              target = item.querySelector('.' + this.targetChildAry[i]);
+              target.style.height = '';
+            }
+          });
         },
 
         /**
@@ -115,14 +131,14 @@ export function matchHeight() {
          * @returns {void}
          */
         setHeights: function () {
-          for (let key in this.rows) {
+          for (let rowsKey in this.rows) {
             const heights = {};
 
             const setSortHeights = () => {
               return new Promise ( resolve => {
 
                 // 配置Y軸が同一にあるwrapperを順に処理
-                this.rows[key].forEach( item => {
+                this.rows[rowsKey].forEach( item => {
                   let i = 0;
 
                   // wrapper内の高さを揃える子要素の高さを順に取得
@@ -143,16 +159,25 @@ export function matchHeight() {
             };
 
             setSortHeights().then( () => {
-              let classesKeyAry = [];
-              let rowsKeyAry = [];
+              const classesKeyAry = [];
+              const rowsKeyAry = [];
 
-              for (let key in heights) {
-                heights[key].sort(this.sortAry);
-                classesKeyAry.push([key]);
+              for (let heightsKey in heights) {
+                heights[heightsKey].sort(this.sortAry);
+                classesKeyAry.push([heightsKey]);
               }
 
-              rowsKeyAry.push([key]);
-              console.log(classesKeyAry, this.rows[rowsKeyAry[0]], heights)
+              rowsKeyAry.push([rowsKey]);
+
+              this.rows[rowsKeyAry[0]].forEach( item => {
+                let i = 0;
+                let target = null;
+
+                for (; i < classesKeyAry.length; i++) {
+                  target = item.querySelector('.' + classesKeyAry[i])
+                  target.style.height = heights[classesKeyAry[i]][0] + 'px';
+                }
+              })
             });
           }
         },
