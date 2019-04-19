@@ -16,7 +16,7 @@ export function matchHeight() {
 
   MatchHeight.prototype = {
     /**
-     * インスタンスをまとめる関数
+     * 参照する関数を実行
      * @returns {void}
      */
     init: function () {
